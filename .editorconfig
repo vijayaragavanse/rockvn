@@ -1,0 +1,15 @@
+# Editor-agnostic baseline formatting. C++ formatting authority is
+# .clang-format; this file covers everything clang-format does not touch.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+[*.md]
+# Trailing double-space is meaningful in Markdown (hard line break).
+trim_trailing_whitespace = false

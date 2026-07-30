@@ -1,0 +1,19 @@
+# Static analysis policy. Runs locally and through IDE integrations today;
+# it enters CI in M2, when a real service architecture exists for it to
+# enforce — linting a smoke test in CI would be ceremony, not engineering.
+# Disabled checks are style overlaps or noise, documented in
+# docs/standards/coding-guidelines.md.
+Checks: >
+  -*,
+  bugprone-*,
+  cppcoreguidelines-*,
+  modernize-*,
+  performance-*,
+  readability-*,
+  -modernize-use-trailing-return-type,
+  -readability-identifier-length,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -readability-magic-numbers
+WarningsAsErrors: ''
+HeaderFilterRegex: '(services|tests|tools)/.*'
+FormatStyle: file

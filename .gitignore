@@ -1,0 +1,21 @@
+# Build trees — one per CMake preset, always out of source.
+/build/
+
+# Machine-local CMake presets. Shared presets live in CMakePresets.json;
+# per-machine overrides belong to the machine, not the repository.
+CMakeUserPresets.json
+
+# vcpkg manifest-mode install tree (regenerated on every configure).
+vcpkg_installed/
+
+# IDE and tooling state.
+.vs/
+.vscode/
+.idea/
+.cache/
+
+# Environment files. Secrets and machine-specific configuration never
+# enter version control; committed examples use the .example suffix.
+.env
+.env.*
+!.env.example

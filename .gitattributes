@@ -1,0 +1,13 @@
+# One line-ending policy for every machine. Development switches between
+# Windows and Linux; normalizing to LF keeps git diffs, clang-format output,
+# and CI checks byte-identical regardless of which machine authored a file.
+* text=auto eol=lf
+
+# Windows command interpreter requires CRLF to execute these correctly.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Never normalize binary assets.
+*.png binary
+*.jpg binary
+*.ico binary

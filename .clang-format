@@ -1,0 +1,8 @@
+# Google C++ style is the base; every deviation is listed and justified in
+# docs/standards/coding-guidelines.md. Formatting disputes are settled by
+# this file and CI, never by review comments.
+BasedOnStyle: Google
+Standard: Latest
+ColumnLimit: 100
+DerivePointerAlignment: false
+PointerAlignment: Left
