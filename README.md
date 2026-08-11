@@ -24,20 +24,24 @@ The rule is enforced by process, not memory: the
 
 ## Status
 
-**M0 complete** — toolchain, standards, CI, and the decision-making
-framework are in place. No services exist yet; that is deliberate
-([why](docs/failed-ideas/0001-parallel-service-skeletons.md)). The
-[target architecture](docs/architecture/system-overview.md) shows the
-destination; the roadmap below shows how it gets earned.
+**M2 complete** — the walking skeleton is real: a User Service with a
+framework-free domain layer, repository seam, full CRUD over HTTP,
+structured logging with request IDs, problem+json errors, and 44 green
+tests. M3 (PostgreSQL behind the same seam) is
+[designed](docs/architecture/m3-postgresql-persistence.md) and next to
+build. The [target architecture](docs/architecture/system-overview.md)
+shows the destination; the roadmap below shows how it gets earned — one
+milestone at a time, each closed by a written
+[exit review](docs/reviews/m2-exit-review.md).
 
 ## Roadmap
 
 | # | Milestone | Status |
 |---|---|---|
 | M0 | Repository, standards, toolchain, CI | ✅ Complete |
-| M1 | Server foundation — first HTTP service process | ⏭ Next |
-| M2 | Layered architecture inside the service | Planned |
-| M3 | Persistence with PostgreSQL | Planned |
+| M1 | Server foundation — first HTTP service process | ✅ Complete |
+| M2 | Layered architecture inside the service | ✅ Complete |
+| M3 | Persistence with PostgreSQL | 📐 Designed — next |
 | M4 | Authentication service and JWT | Planned |
 | M5 | Networking fundamentals (TCP, sockets, HTTP on the wire) | Planned |
 | M6 | Product service and inter-service communication (REST vs gRPC) | Planned |

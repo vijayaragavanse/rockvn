@@ -1,12 +1,15 @@
 # System Overview
 
-## Current state (after M0)
+## Current state (after M2)
 
-No services exist. M0 delivered the ground the system will stand on:
-toolchain, standards, CI, and the decision-making framework. This document
-therefore shows the *destination*, and the table below maps how each part
-of it gets earned. Keeping target and current state in one honest document
-is deliberate — see [philosophy: documentation is a deliverable](../philosophy.md).
+One service exists — the User Service walking skeleton — with the layer
+contract every later service copies: framework-confined transport,
+framework-free domain, a repository seam (in-memory today, PostgreSQL in
+M3), structured logging with request IDs, and problem+json errors. The
+rest of this document shows the *destination*, and the table below maps
+how each part gets earned. Keeping target and current state in one honest
+document is deliberate — see
+[philosophy: documentation is a deliverable](../philosophy.md).
 
 ## Target architecture
 
