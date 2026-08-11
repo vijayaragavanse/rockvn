@@ -57,14 +57,33 @@ jobs:
         if: runner.os == 'Linux'
         run: echo "::add-matcher::.github/problem-matcher-gcc.json"
 
+      # bash on both runners so the failure-surfacing step below is one
+      # implementation; GitHub runs it with -eo pipefail, so tee cannot mask
+      # a non-zero exit.
       - name: Configure
-        run: cmake --preset ${{ matrix.preset }}
+        shell: bash
+        run: cmake --preset ${{ matrix.preset }} 2>&1 | tee ci-configure.log
 
       - name: Build
-        run: cmake --build --preset ${{ matrix.preset }}
+        shell: bash
+        run: cmake --build --preset ${{ matrix.preset }} 2>&1 | tee ci-build.log
 
       - name: Test
-        run: ctest --preset ${{ matrix.preset }}
+        shell: bash
+        run: ctest --preset ${{ matrix.preset }} 2>&1 | tee ci-test.log
+
+      # Actions logs need repository access; annotations do not. Without
+      # this, a Windows configure failure or a failing test is invisible to
+      # anyone without a login.
+      - name: Surface failure
+        if: failure()
+        shell: bash
+        run: |
+          for stage in configure build test; do
+            if [ -f "ci-$stage.log" ]; then
+              echo "::error::[$stage] $(tail -c 1800 "ci-$stage.log" | tr '\n' '|')"
+            fi
+          done
 
   format-check:
     name: clang-format

@@ -54,6 +54,14 @@ target_link_libraries(
   user_service_api
   PUBLIC user_service_core user_service_domain Drogon::Drogon
   PRIVATE rockvn::warnings rockvn::sanitizers)
+# GCC reports a potential null dereference at -O2 and above when it inlines
+# drogon's std::any attribute accessor: any_cast through a pointer may
+# return null in the general case. It cannot here — the key is checked with
+# find() first and is only ever written as the type read back, in one file.
+# Scoped to this target so the check stays active everywhere else.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  target_compile_options(user_service_api PRIVATE -Wno-null-dereference)
+endif()
 
 add_executable(user_service src/main.cpp)
 target_link_libraries(user_service PRIVATE user_service_api user_service_repository
