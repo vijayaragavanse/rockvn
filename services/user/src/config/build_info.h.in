@@ -1,0 +1,11 @@
+#pragma once
+
+// Generated at configure time — see services/user/CMakeLists.txt. Embedding
+// version and commit makes a misdeployed binary identifiable from /health.
+
+namespace rockvn::user {
+
+inline constexpr const char* kVersion = "@PROJECT_VERSION@";
+inline constexpr const char* kGitSha = "@ROCKVN_GIT_SHA@";
+
+}  // namespace rockvn::user

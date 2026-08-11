@@ -21,3 +21,5 @@ the milestone is not done without them
 | [vcpkg & C++ dependency management](vcpkg.md) | M0 |
 | [CI with GitHub Actions](github-actions-ci.md) | M0 |
 | [Git workflow](git-workflow.md) | M0 |
+| [Drogon & HTTP serving](drogon-http-serving.md) | M1 |
+| [Structured logging & request IDs](structured-logging.md) | M1 |
