@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  # Must match builtin-baseline in vcpkg.json so CI resolves the exact
+  # dependency snapshot every developer machine resolves.
+  VCPKG_COMMIT: 659c7023698fc73894a0a296cc89a0143da912bb
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.name }}
+    strategy:
+      # A Windows-only failure must not cancel and hide the Linux result;
+      # cross-platform drift is exactly what this matrix exists to expose.
+      fail-fast: false
+      matrix:
+        include:
+          - name: windows-msvc
+            os: windows-latest
+            preset: ci-windows
+          - name: linux-gcc-sanitizers
+            os: ubuntu-latest
+            preset: ci-linux
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore vcpkg binary cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/vcpkg-binary-cache
+          key: vcpkg-${{ matrix.name }}-${{ hashFiles('vcpkg.json') }}
+
+      - name: Set up vcpkg
+        shell: pwsh
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git "$env:RUNNER_TEMP/vcpkg"
+          git -C "$env:RUNNER_TEMP/vcpkg" checkout $env:VCPKG_COMMIT
+          if ($IsWindows) {
+            & "$env:RUNNER_TEMP/vcpkg/bootstrap-vcpkg.bat" -disableMetrics
+          } else {
+            & "$env:RUNNER_TEMP/vcpkg/bootstrap-vcpkg.sh" -disableMetrics
+          }
+          New-Item -ItemType Directory -Force "$env:RUNNER_TEMP/vcpkg-binary-cache" | Out-Null
+          Add-Content -Path $env:GITHUB_ENV -Value "VCPKG_ROOT=$env:RUNNER_TEMP/vcpkg"
+          Add-Content -Path $env:GITHUB_ENV -Value "VCPKG_BINARY_SOURCES=clear;files,$env:RUNNER_TEMP/vcpkg-binary-cache,readwrite"
+
+      - name: Configure
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.preset }}
+
+      - name: Test
+        run: ctest --preset ${{ matrix.preset }}
+
+  format-check:
+    name: clang-format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify formatting
+        run: |
+          clang-format --version
+          ./scripts/format.sh --check
