@@ -80,7 +80,7 @@ TEST_F(UserServiceTest, CreateRejectsInvalidEmailWithoutTouchingStorage) {
 TEST_F(UserServiceTest, CreateRejectsInvalidNameWithoutTouchingStorage) {
   EXPECT_CALL(repository_, insert(_)).Times(0);
   const std::string too_long(101, 'x');
-  for (const std::string name : {std::string{}, std::string{"   "}, too_long}) {
+  for (const std::string& name : {std::string{}, std::string{"   "}, too_long}) {
     const auto result = service_.create("alice@example.com", name);
     ASSERT_FALSE(result.has_value());
     EXPECT_EQ(result.error().kind, ErrorKind::kValidation);

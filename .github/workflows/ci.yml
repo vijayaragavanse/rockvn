@@ -86,8 +86,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Enable compiler annotations
+        run: echo "::add-matcher::.github/problem-matcher-gcc.json"
+
       - name: Build image
-        run: docker build -f services/user/Dockerfile -t rockvn/user-service:ci .
+        run: |
+          set -o pipefail
+          docker build --progress=plain -f services/user/Dockerfile \
+            -t rockvn/user-service:ci . 2>&1 | tee /tmp/docker-build.log
+
+      # Actions logs need repository access; annotations do not. Failures
+      # inside the image build (toolchain, disk, dependency compiles) are
+      # otherwise invisible to anyone without a login.
+      - name: Surface image build failure
+        if: failure()
+        run: echo "::error::$(tail -c 2000 /tmp/docker-build.log | tr '\n' '|')"
 
       - name: Smoke test /health as non-root
         run: |
