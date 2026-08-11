@@ -20,7 +20,7 @@ work here, the interview notes explain how to talk about them.
 | Decision making & ADRs | Written — [decision-tree.md](../decision-tree.md), [adr/](../adr/template.md) |
 | Build system & dependencies | Written — [interview/cmake.md](../interview/cmake.md), [interview/vcpkg.md](../interview/vcpkg.md) |
 | HTTP server fundamentals | Written — [M1 design](../architecture/m1-server-foundation.md), [interview/drogon-http-serving.md](../interview/drogon-http-serving.md), [interview/structured-logging.md](../interview/structured-logging.md) |
-| Layered architecture & DI | Planned — M2 |
+| Layered architecture & DI | Written — [M2 design](../architecture/m2-layered-architecture.md), [interview/layered-architecture-di.md](../interview/layered-architecture-di.md) |
 | Docker | Planned — M1/M3 |
 | PostgreSQL: schema, indexing, transactions | Planned — M3 |
 | Authentication: JWT, OAuth concepts | Planned — M4 |

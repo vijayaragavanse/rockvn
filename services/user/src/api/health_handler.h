@@ -7,7 +7,7 @@
 #include <chrono>
 #include <string>
 
-#include "api/clock.h"
+#include "domain/clock.h"
 
 namespace rockvn::user::api {
 
@@ -20,14 +20,14 @@ struct BuildInfo {
 // with a fake clock; handle() is the thin Drogon adapter around it.
 class HealthHandler {
  public:
-  HealthHandler(std::string service_name, const Clock& clock, BuildInfo build_info);
+  HealthHandler(std::string service_name, const domain::Clock& clock, BuildInfo build_info);
 
   Json::Value status() const;
   drogon::HttpResponsePtr handle(const drogon::HttpRequestPtr& request) const;
 
  private:
   std::string service_name_;
-  const Clock& clock_;
+  const domain::Clock& clock_;
   BuildInfo build_info_;
   std::chrono::steady_clock::time_point started_;
 };

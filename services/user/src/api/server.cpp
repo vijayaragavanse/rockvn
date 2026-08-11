@@ -10,8 +10,8 @@
 
 namespace rockvn::user::api {
 
-void configure_app(const config::Config& cfg, HealthHandler& health,
-                   RequestLogger& request_logger) {
+void configure_app(const config::Config& cfg, HealthHandler& health, RequestLogger& request_logger,
+                   UserHandlers& users) {
   // The framework's own logging competes with our structured lines on
   // stdout; anything below warn is noise once our request logging exists.
   trantor::Logger::setLogLevel(trantor::Logger::kWarn);
@@ -26,6 +26,34 @@ void configure_app(const config::Config& cfg, HealthHandler& health,
                         callback(health.handle(request));
                       },
                       {drogon::Get});
+
+  app.registerHandler("/users",
+                      [&users](const drogon::HttpRequestPtr& request,
+                               std::function<void(const drogon::HttpResponsePtr&)>&& callback) {
+                        callback(users.create(request));
+                      },
+                      {drogon::Post});
+  app.registerHandler("/users",
+                      [&users](const drogon::HttpRequestPtr& request,
+                               std::function<void(const drogon::HttpResponsePtr&)>&& callback) {
+                        callback(users.list(request));
+                      },
+                      {drogon::Get});
+  app.registerHandler("/users/{id}",
+                      [&users](const drogon::HttpRequestPtr& request,
+                               std::function<void(const drogon::HttpResponsePtr&)>&& callback,
+                               const std::string& id) { callback(users.get(request, id)); },
+                      {drogon::Get});
+  app.registerHandler("/users/{id}",
+                      [&users](const drogon::HttpRequestPtr& request,
+                               std::function<void(const drogon::HttpResponsePtr&)>&& callback,
+                               const std::string& id) { callback(users.rename(request, id)); },
+                      {drogon::Put});
+  app.registerHandler("/users/{id}",
+                      [&users](const drogon::HttpRequestPtr& request,
+                               std::function<void(const drogon::HttpResponsePtr&)>&& callback,
+                               const std::string& id) { callback(users.remove(request, id)); },
+                      {drogon::Delete});
 
   app.registerPreRoutingAdvice([&request_logger](const drogon::HttpRequestPtr& request) {
     request_logger.on_request_start(request);

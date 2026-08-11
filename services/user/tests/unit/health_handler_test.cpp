@@ -4,13 +4,13 @@
 
 #include <chrono>
 
-#include "api/clock.h"
+#include "domain/clock.h"
 
 namespace {
 
 using namespace std::chrono_literals;
 
-class FakeClock final : public rockvn::user::api::Clock {
+class FakeClock final : public rockvn::user::domain::Clock {
  public:
   std::chrono::system_clock::time_point system_now() const override { return system_now_; }
   std::chrono::steady_clock::time_point steady_now() const override { return steady_now_; }

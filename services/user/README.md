@@ -26,10 +26,19 @@ Invalid configuration exits non-zero before the listener opens, reporting
 
 ## API
 
-| Route | Response |
-|---|---|
-| `GET /health` | `200` — status, service, version+git SHA, uptime, timestamp (liveness; readiness split arrives with the first real dependency) |
-| anything else | RFC 9457 `application/problem+json` |
+| Route | Success | Errors |
+|---|---|---|
+| `GET /health` | `200` — status, service, version+git SHA, uptime, timestamp (liveness) | — |
+| `POST /users` `{email, name}` | `201` + `Location` + user | `400` validation, `409` duplicate email |
+| `GET /users/{id}` | `200` user | `404` |
+| `GET /users` | `200` `{"users":[...]}` | — |
+| `PUT /users/{id}` `{name}` | `200` user (email is immutable until auth exists, M4) | `400`, `404` |
+| `DELETE /users/{id}` | `204` | `404` |
+
+All errors are RFC 9457 `application/problem+json` with the request ID as
+`instance`; validation errors carry a `field` extension. Storage is
+in-memory until M3 swaps in PostgreSQL behind the repository seam. All
+endpoints are unauthenticated until M4 — stated plainly, not forgotten.
 
 Every response carries `X-Request-Id` (echoed if supplied, generated
 otherwise); every request produces exactly one structured log line with
@@ -57,7 +66,8 @@ docker run --rm -p 8080:8080 rockvn/user-service
 ## Structure
 
 Per the [services contract](../README.md): `src/api/` is the only place
-framework types exist (enforced by target structure — `user_service_core`
-cannot link Drogon); `src/config/` is framework-free configuration and
-logging; `main.cpp` is the composition root, wiring only. `domain/` and
-`repository/` arrive in M2 with their first content.
+framework types exist; `src/domain/` is the framework-free business core
+(its library target links only the error-value type — a framework include
+there is a build error); `src/repository/` holds storage implementations
+behind the domain's seam; `src/config/` is framework-free configuration
+and logging; `main.cpp` is the composition root, wiring only.

@@ -14,7 +14,15 @@ constexpr const char* kRequestIdAttribute = "rockvn.request_id";
 
 }  // namespace
 
-RequestLogger::RequestLogger(logging::StructuredLogger& log, const Clock& clock)
+std::string request_id_of(const drogon::HttpRequestPtr& request) {
+  const auto attributes = request->attributes();
+  if (!attributes->find(kRequestIdAttribute)) {
+    return {};
+  }
+  return attributes->get<std::string>(kRequestIdAttribute);
+}
+
+RequestLogger::RequestLogger(logging::StructuredLogger& log, const domain::Clock& clock)
     : log_(log), clock_(clock) {}
 
 void RequestLogger::on_request_start(const drogon::HttpRequestPtr& request) const {
