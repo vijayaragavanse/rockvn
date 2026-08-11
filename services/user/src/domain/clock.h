@@ -2,11 +2,11 @@
 
 #include <chrono>
 
-namespace rockvn::user::api {
+namespace rockvn::user::domain {
 
-// The one seam M1 needs a test double for: time. system_now feeds
-// human-facing timestamps; steady_now feeds durations and uptime, immune
-// to wall-clock adjustments.
+// Time is a dependency like any other. system_now feeds human-facing
+// timestamps and entity fields; steady_now feeds durations and uptime,
+// immune to wall-clock adjustments. Tests inject a fake.
 class Clock {
  public:
   virtual ~Clock() = default;
@@ -24,4 +24,4 @@ class SystemClock final : public Clock {
   }
 };
 
-}  // namespace rockvn::user::api
+}  // namespace rockvn::user::domain

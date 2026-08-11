@@ -23,3 +23,4 @@ the milestone is not done without them
 | [Git workflow](git-workflow.md) | M0 |
 | [Drogon & HTTP serving](drogon-http-serving.md) | M1 |
 | [Structured logging & request IDs](structured-logging.md) | M1 |
+| [Layered architecture & DI](layered-architecture-di.md) | M2 |

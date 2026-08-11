@@ -6,7 +6,8 @@
 
 namespace rockvn::user::api {
 
-HealthHandler::HealthHandler(std::string service_name, const Clock& clock, BuildInfo build_info)
+HealthHandler::HealthHandler(std::string service_name, const domain::Clock& clock,
+                             BuildInfo build_info)
     : service_name_(std::move(service_name)),
       clock_(clock),
       build_info_(std::move(build_info)),

@@ -8,13 +8,17 @@
 #include <cstdio>
 #include <string>
 
-#include "api/clock.h"
 #include "api/health_handler.h"
 #include "api/request_logger.h"
 #include "api/server.h"
+#include "api/user_handlers.h"
+#include "api/uuid_generator.h"
 #include "config/build_info.h"
 #include "config/config.h"
 #include "config/logging.h"
+#include "domain/clock.h"
+#include "domain/user_service.h"
+#include "repository/in_memory_user_repository.h"
 
 int main() {
   const auto cfg_result = rockvn::user::config::load_from_env();
@@ -31,12 +35,19 @@ int main() {
 
   const std::string service_name = "user-service";
   rockvn::user::logging::StructuredLogger log(service_name, cfg);
-  rockvn::user::api::SystemClock clock;
+  rockvn::user::domain::SystemClock clock;
   rockvn::user::api::HealthHandler health(service_name, clock,
                                           {rockvn::user::kVersion, rockvn::user::kGitSha});
   rockvn::user::api::RequestLogger request_logger(log, clock);
 
-  rockvn::user::api::configure_app(cfg, health, request_logger);
+  // Storage is in-memory until M3 introduces PostgreSQL behind the same
+  // repository seam — this is the one line that will change.
+  rockvn::user::repository::InMemoryUserRepository user_repository;
+  rockvn::user::api::UuidGenerator id_generator;
+  rockvn::user::domain::UserService user_service(user_repository, clock, id_generator);
+  rockvn::user::api::UserHandlers user_handlers(user_service);
+
+  rockvn::user::api::configure_app(cfg, health, request_logger, user_handlers);
 
   Json::Value startup;
   startup["event"] = "startup";
