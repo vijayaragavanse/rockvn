@@ -4,6 +4,9 @@
   "description": "Production-inspired microservices backend in C++20",
   "builtin-baseline": "659c7023698fc73894a0a296cc89a0143da912bb",
   "dependencies": [
-    "gtest"
+    "drogon",
+    "gtest",
+    "spdlog",
+    "tl-expected"
   ]
 }

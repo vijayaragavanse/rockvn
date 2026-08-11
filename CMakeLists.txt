@@ -24,3 +24,4 @@ include(cmake/Sanitizers.cmake)
 enable_testing()
 
 add_subdirectory(tests/toolchain_smoke)
+add_subdirectory(services/user)
