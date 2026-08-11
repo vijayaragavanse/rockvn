@@ -2,6 +2,7 @@
 
 #include <json/json.h>
 
+#include <memory>
 #include <optional>
 #include <utility>
 

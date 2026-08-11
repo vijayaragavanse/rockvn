@@ -49,6 +49,14 @@ jobs:
           Add-Content -Path $env:GITHUB_ENV -Value "VCPKG_ROOT=$env:RUNNER_TEMP/vcpkg"
           Add-Content -Path $env:GITHUB_ENV -Value "VCPKG_BINARY_SOURCES=clear;files,$env:RUNNER_TEMP/vcpkg-binary-cache,readwrite"
 
+      # Compiler diagnostics become check annotations, which are readable
+      # without repository access. Added after a Linux-only build failure
+      # whose cause was invisible in the public API — the logs endpoint
+      # requires authentication, annotations do not.
+      - name: Enable compiler annotations
+        if: runner.os == 'Linux'
+        run: echo "::add-matcher::.github/problem-matcher-gcc.json"
+
       - name: Configure
         run: cmake --preset ${{ matrix.preset }}
 

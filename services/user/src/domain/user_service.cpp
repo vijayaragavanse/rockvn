@@ -1,6 +1,7 @@
 #include "domain/user_service.h"
 
 #include <algorithm>
+#include <cstddef>
 #include <optional>
 #include <utility>
 
@@ -24,8 +25,11 @@ std::optional<Error> validate_email(const std::string& email) {
     return Error{ErrorKind::kValidation,
                  "email must contain exactly one '@' with text on both sides", "email"};
   }
-  const bool has_invalid = std::any_of(email.begin(), email.end(), [](unsigned char ch) {
-    return ch <= ' ';  // spaces and control characters
+  // std::string yields char; the cast to unsigned char is explicit because
+  // char is signed on most platforms and the classification is defined on
+  // unsigned values.
+  const bool has_invalid = std::any_of(email.begin(), email.end(), [](char ch) {
+    return static_cast<unsigned char>(ch) <= ' ';  // spaces and control characters
   });
   if (has_invalid) {
     return Error{ErrorKind::kValidation, "email must not contain spaces or control characters",
@@ -41,8 +45,8 @@ std::optional<Error> validate_name(const std::string& name) {
   if (name.size() > kMaxNameLength) {
     return Error{ErrorKind::kValidation, "name must be at most 100 characters", "name"};
   }
-  const bool only_whitespace =
-      std::all_of(name.begin(), name.end(), [](unsigned char ch) { return ch <= ' '; });
+  const bool only_whitespace = std::all_of(
+      name.begin(), name.end(), [](char ch) { return static_cast<unsigned char>(ch) <= ' '; });
   if (only_whitespace) {
     return Error{ErrorKind::kValidation, "name must contain visible characters", "name"};
   }
